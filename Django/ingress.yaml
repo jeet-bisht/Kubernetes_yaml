@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todolist-backend-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - host: kubernetes.docker.internal
+      http:
+       paths:
+        - path: /backend(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: django-web-srvc
+              port: 
+                number: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todolist-frontend-ingress
+  annotations:
+spec:
+  rules:
+    - host: kubernetes.docker.internal
+      http:
+       paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: my-react-app
+              port:
+                number: 3000

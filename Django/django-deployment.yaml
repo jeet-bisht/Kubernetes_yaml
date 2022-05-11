@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-web-srvc
+  labels:
+    app: djangoweb
+spec:
+  ports:
+    - port: 8000
+  selector:
+    app: django
+    tier: frontend
+  type: ClusterIP
+
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: django-deployment
+  labels:
+    app: django
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: django
+        tier: frontend
+    spec:
+      containers:
+      - image: jeetbisht91/django:latest
+        name: django
+        ports:
+        - containerPort: 8000
+          name: django

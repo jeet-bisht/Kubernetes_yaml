@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-service
+  labels:
+    app: django
+spec:
+  ports:
+    - port: 8000
+  selector:
+    app: django
+    tier: frontend
+  type: NodePort
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: django
+  labels:
+    app: django
+spec:
+  selector:
+    matchLabels:
+      app: django
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: django
+        tier: frontend
+    spec:
+      containers:
+      - image: jeetbisht91/django:custom
+        name: django
+ #       env:
+ #       - name: POSTGRES_HOST
+ #         value: postgres-sql
+ #       - name: POSTGRES_USER
+ #         value: postgres
+ #       - name: POSTGRES_NAME
+ #         value: AWS
+ #       - name: POSTGRES_PASSWORD
+ #         value: root
+        ports:
+        - containerPort: 8000
+          name: django
+  
